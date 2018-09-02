@@ -1,4 +1,4 @@
-//
+////
 //  main.c
 //  cmap
 //
@@ -7,30 +7,22 @@
 //
 
 #include <stdio.h>
+#include <string.h>
 #include "map.h"
 
+
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    printf("Hello, World!\n");
-    
     Map *map = init_map();
     
     //add to map
     int key = 5;
     int val = 2;
     map_put(map, &key, &val, sizeof(key), sizeof(val));
-    map_elem *first_elem = map->elem_arr[0];
-    printf("first key is %d with val %d\n", *((int *) first_elem->key),
-           *((int *) first_elem->val));
     
 //    add second elem
-    map_put (map, &val, &key, sizeof(val), sizeof(key));
-    map_elem *second_elem = first_elem->next;
-    if (!second_elem)
-        printf("no second elem found");
-    else
-        printf ("second key is %d with val %d\n", *((int*) second_elem->key),
-                *((int*) second_elem->val));
+    int second_key = 555;
+    int second_val = 45;
+    map_put (map, &second_key, &second_val, sizeof(second_val), sizeof(second_key));
     
     //test get function
     const void *first_val = map_get(map, &key, sizeof(key));
@@ -57,13 +49,34 @@ int main(int argc, const char * argv[]) {
         printf("retrv val with key %d has val: %d\n", val,
                *((int*) retrv_val));
     
-    //remove second item
-    map_remove(map, &val, sizeof(val));
-    const void *retrv_null = map_get(map, &val, sizeof(val));
+    //remove second int item
+    map_remove(map, &second_key, sizeof(val));
+    const void *retrv_null = map_get(map, &second_key, sizeof(val));
     if (!retrv_null)
         printf("successfully removed second elem\n");
     
     free_map(map);
+    
+    Map *second_map = init_map();
+    char *str_key = "hola";
+    char *str_val = "hi";
+    size_t key_len = strlen(str_key) + 1;
+    size_t val_len = strlen(str_val) + 1;
+    map_put(second_map, str_key, str_val, key_len, val_len);
+    
+    const char *retrv_str1 = map_get(second_map, str_key, key_len);
+    printf("key: %s, val: %s\n", str_key, retrv_str1);
+    
+    char *str_key2 = "how are you?";
+    char *str_val2 = "como estas?";
+    size_t key_len2 = strlen(str_key2) + 1;
+    size_t val_len2 = strlen(str_val2) + 1;
+    map_put(second_map, str_key2, str_val2, key_len2, val_len2);
+    
+    const char *retrv_str2 = map_get(second_map, str_key2, key_len2);
+    printf("key %s, val: %s\n", str_key2, retrv_str2);
+    
+    free_map(second_map);
     
     return 0;
 }

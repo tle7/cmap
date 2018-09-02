@@ -10,13 +10,14 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include "hash.h"
 
 //private helpers
 //will add hash function
-static int get_bucket_num(void *key, size_t key_len) {
+static int get_bucket_num(const void *key, size_t key_len) {
     assert (key && key_len > 0);
-    
-    return 0;
+    unsigned int hash_val = hash(key, key_len);
+    return hash_val % MAP_NUM_BUCKETS;
 }
 
 static void map_add_elem(Map *map, map_elem *add_elem) {
@@ -25,7 +26,7 @@ static void map_add_elem(Map *map, map_elem *add_elem) {
     map_elem *list_node = map->elem_arr[bucket_num];
     
     //add elem
-    if (!list_node) {
+    if (!list_node) { //new head of list
         map->elem_arr[bucket_num] = add_elem;
         return;
     }
@@ -37,7 +38,8 @@ static void map_add_elem(Map *map, map_elem *add_elem) {
 }
 
 //get and delete use this helper to retrieve the queried elem
-static map_elem *get_map_elem(Map *map, void *key, size_t key_sz) {
+static map_elem *get_map_elem(Map *map, const void *key, size_t key_sz) {
+    assert(map && key && key_sz > 0);
     int bucket_num = get_bucket_num(key, key_sz);
     map_elem *search_elem = map->elem_arr[bucket_num];
     
@@ -55,12 +57,13 @@ static map_elem *get_map_elem(Map *map, void *key, size_t key_sz) {
 Map *init_map() {
     Map *new_map = malloc(sizeof(Map));
     
-    for (size_t i = 0; i < MAP_ARRAY_SZ; i++)
+    for (size_t i = 0; i < MAP_NUM_BUCKETS; i++)
         new_map->elem_arr[i] = NULL;
     return new_map;
 }
 
-void map_put(Map *map, void *key, void *val, size_t key_sz, size_t val_sz) {
+void map_put(Map *map, const void *key, const void *val,
+             size_t key_sz, size_t val_sz) {
     assert (map && key && val && key_sz > 0 && val_sz > 0);
     
     
@@ -88,7 +91,7 @@ void map_put(Map *map, void *key, void *val, size_t key_sz, size_t val_sz) {
 /* returns a pointer to the val
  * returns NULL if no value exists
  */
-const void *map_get(Map *map, void *key, size_t key_sz) {
+const void *map_get(Map *map, const void *key, size_t key_sz) {
     
     map_elem *found_elem = get_map_elem(map, key, key_sz);
     if (!found_elem)
@@ -96,7 +99,9 @@ const void *map_get(Map *map, void *key, size_t key_sz) {
     return found_elem->val;
 }
 
-void map_remove(Map *map, void *key, size_t key_sz) {
+void map_remove(Map *map, const void *key, size_t key_sz) {
+    assert (map && key && key_sz > 0);
+    
     map_elem *remove_elem = get_map_elem(map, key, key_sz);
     if (!remove_elem)
         return;
@@ -120,13 +125,15 @@ void map_remove(Map *map, void *key, size_t key_sz) {
 }
 
 void free_map(Map *map) {
+    if (!map)
+        return;
+    
     //free all elements in map
-    for (size_t i = 0; i < MAP_ARRAY_SZ; i++) {
+    for (size_t i = 0; i < MAP_NUM_BUCKETS; i++) {
         //free all items in each bucket
         map_elem *curr_elem = map->elem_arr[i];
         map_elem *next_elem = NULL;
         while (curr_elem) {
-            printf("freeing elem in free_map\n");
             next_elem = curr_elem->next;
             free(curr_elem->key);
             free(curr_elem->val);
