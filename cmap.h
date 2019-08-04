@@ -26,9 +26,10 @@ typedef struct map_elem {
 
 typedef struct {
     map_elem *elem_arr[MAP_NUM_BUCKETS];
+    size_t nelems;
 } Map;
 
-Map *init_map();
+Map *map_init();
 
 //If a string is the map or key, include +1 for the null terminator in the size
 void map_put(Map *map, const void *key, const void *val,
@@ -38,6 +39,8 @@ const void *map_get(Map *map, const void *key, size_t key_sz);
 
 void map_remove(Map *map, const void *key, size_t key_sz);
 
-void free_map(Map *map);
+void map_free(Map *map);
+
+size_t map_num_elems(Map *map);
 
 #endif /* map_h */

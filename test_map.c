@@ -8,21 +8,24 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "map.h"
+#include "cmap.h"
 
 
 int main(int argc, const char * argv[]) {
-    Map *map = init_map();
+    Map *map = map_init();
     
     //add to map
     int key = 5;
     int val = 2;
     map_put(map, &key, &val, sizeof(key), sizeof(val));
+    printf("added 1 elem, number of elems in map: %zu\n", 
+            map_num_elems(map));
     
 //    add second elem
     int second_key = 555;
     int second_val = 45;
-    map_put (map, &second_key, &second_val, sizeof(second_val), sizeof(second_key));
+    map_put (map, &second_key, &second_val, sizeof(second_val), 
+            sizeof(second_key));
     
     //test get function
     const void *first_val = map_get(map, &key, sizeof(key));
@@ -40,7 +43,8 @@ int main(int argc, const char * argv[]) {
     
     map_elem *new_first_elem = map->elem_arr[0];
     if (new_first_elem)
-        printf("new first elem has key: %d and val: %d\n", *((int*) new_first_elem->key),
+        printf("new first elem has key: %d and val: %d\n", 
+                *((int*) new_first_elem->key),
                *((int*) new_first_elem->val));
     
     //make sure getting new first elem is successful
@@ -55,9 +59,9 @@ int main(int argc, const char * argv[]) {
     if (!retrv_null)
         printf("successfully removed second elem\n");
     
-    free_map(map);
+    map_free(map);
     
-    Map *second_map = init_map();
+    Map *second_map = map_init();
     char *str_key = "hola";
     char *str_val = "hi";
     size_t key_len = strlen(str_key) + 1;
@@ -76,7 +80,7 @@ int main(int argc, const char * argv[]) {
     const char *retrv_str2 = map_get(second_map, str_key2, key_len2);
     printf("key %s, val: %s\n", str_key2, retrv_str2);
     
-    free_map(second_map);
+    map_free(second_map);
     
     return 0;
 }

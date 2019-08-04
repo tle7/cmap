@@ -6,14 +6,13 @@
 //  Copyright © 2018 Timothy Quang-Tin Le. All rights reserved.
 //
 
-#include "map.h"
+#include "cmap.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include "hash.h"
 
 //private helpers
-//will add hash function
 static int get_bucket_num(const void *key, size_t key_len) {
     assert (key && key_len > 0);
     unsigned int hash_val = hash(key, key_len);
@@ -28,6 +27,7 @@ static void map_add_elem(Map *map, map_elem *add_elem) {
     //add elem
     if (!list_node) { //new head of list
         map->elem_arr[bucket_num] = add_elem;
+        map->nelems++;
         return;
     }
     
@@ -35,6 +35,7 @@ static void map_add_elem(Map *map, map_elem *add_elem) {
         list_node = list_node->next;
     list_node->next = add_elem;
     add_elem->prev = list_node;
+    map->nelems++;
 }
 
 //get and delete use this helper to retrieve the queried elem
@@ -54,11 +55,12 @@ static map_elem *get_map_elem(Map *map, const void *key, size_t key_sz) {
 }
 
 //public functions
-Map *init_map() {
+Map *map_init() {
     Map *new_map = malloc(sizeof(Map));
     
     for (size_t i = 0; i < MAP_NUM_BUCKETS; i++)
         new_map->elem_arr[i] = NULL;
+    new_map->nelems = 0;
     return new_map;
 }
 
@@ -103,8 +105,8 @@ void map_remove(Map *map, const void *key, size_t key_sz) {
     assert (map && key && key_sz > 0);
     
     map_elem *remove_elem = get_map_elem(map, key, key_sz);
-    if (!remove_elem)
-        return;
+    if (!remove_elem) 
+        return; //elem not in map
 
     //free elem pointers
     free(remove_elem->key);
@@ -122,9 +124,10 @@ void map_remove(Map *map, const void *key, size_t key_sz) {
         remove_elem->next->prev = remove_elem->prev;
 
     free(remove_elem);
+    map->nelems--;
 }
 
-void free_map(Map *map) {
+void map_free(Map *map) {
     if (!map)
         return;
     
@@ -140,8 +143,15 @@ void free_map(Map *map) {
             free(curr_elem);
             
             curr_elem = next_elem;
+            map->nelems--;
         }
     }
-    
+    assert(map->nelems == 0);
     free(map);
+}
+
+//add function to print out map distribution
+
+size_t map_num_elems(Map *map) {
+    return map->nelems;
 }
