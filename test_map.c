@@ -34,8 +34,8 @@ void test_map_distrib_str() {
 void test_map_distrib_num() {
     printf("\ntest_map_distrib_num:\n");
     Map *map = map_init();
-    size_t key_val_sz = sizeof(size_t);
-    for (size_t ind = 0; ind < 2*MAP_NUM_BUCKETS; ind++) {
+    size_t key_val_sz = sizeof(int);
+    for (int ind = 0; ind < 2*MAP_NUM_BUCKETS; ind++) {
         map_put(map, &ind, &ind, key_val_sz, key_val_sz);
     }
     map_print_distrib(map);
