@@ -150,8 +150,40 @@ void map_free(Map *map) {
     free(map);
 }
 
-//add function to print out map distribution
-
 size_t map_num_elems(Map *map) {
     return map->nelems;
+}
+
+//prints number of elements hashed to each bucket
+void map_print_distrib(Map *map) {
+    size_t total_num_elems = 0;
+    for (size_t ind = 0; ind < MAP_NUM_BUCKETS; ind++) {
+        size_t elem_cnt = 0;
+        map_elem *curr_elem = map->elem_arr[ind];
+        while (curr_elem) {
+            elem_cnt++;
+            total_num_elems++;
+            curr_elem = curr_elem->next;
+        }
+        printf ("bucket %zu has %zu elems\n", ind, elem_cnt);
+    }
+    assert(total_num_elems == map->nelems);
+    printf("total num elems: %zu\n", total_num_elems);
+}
+
+void map_print_str_int_elems(Map *map, bool all_strs) {
+    for (size_t ind = 0; ind < MAP_NUM_BUCKETS; ind++) {
+        printf("bucket %zu has the following strs:\n", ind);
+        map_elem *curr_elem = map->elem_arr[ind];
+        while(curr_elem) {
+            if (all_strs) {
+                printf("key: %s, val: %s\n", (char *) curr_elem->key,
+                        (char *) curr_elem->val);
+            } else {
+                printf("key: %d, val: %d\n", *(int *) curr_elem->key,
+                        *(int *) curr_elem->val);
+            }
+            curr_elem = curr_elem->next;
+        }
+    }
 }
