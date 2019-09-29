@@ -15,7 +15,7 @@
 
 void test_map_distrib_str() {
     printf("testing distribution of strings\n");
-    char str_arr[NUM_STRS][MAX_STR_LEN] = {"ab", "ab2", "hi", "hola", "howdy", 
+    char str_arr[NUM_STRS][MAX_STR_LEN] = {"ab", "ab2", "hi", "hola", "hello", 
                                     "how are you doing today", "cmap", "hash"};
     Map *map = map_init();
     for (size_t i = 0; i < NUM_STRS; i++) {

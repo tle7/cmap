@@ -32,6 +32,8 @@ void map_free(Map *map);
 
 size_t map_num_elems(Map *map);
 
+//prints the distribution of the buckets of the map
+//this allows testing the distribution from the hash function
 void map_print_distrib(Map *map);
 
 //should only call if all keys and vals in map are strs or ints
