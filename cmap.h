@@ -15,20 +15,8 @@
 #define MAP_NUM_BUCKETS 16 //based on default setting in Java
                            //https://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html
 
-typedef struct map_elem {
-    void *key;
-    size_t key_sz;
-    void *val;
-    size_t val_sz;
-    
-    struct map_elem *next;
-    struct map_elem *prev;
-} map_elem;
-
-typedef struct {
-    map_elem *elem_arr[MAP_NUM_BUCKETS];
-    size_t nelems;
-} Map;
+typedef struct map_elem map_elem;
+typedef struct map Map;
 
 Map *map_init();
 

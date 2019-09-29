@@ -1,6 +1,5 @@
 ////
-//  main.c
-//  cmap
+//  test_map.c: this file test cmap.h functions
 //
 //  Created by Timothy Quang-Tin Le on 8/19/18.
 //  Copyright © 2018 Timothy Quang-Tin Le. All rights reserved.
@@ -15,7 +14,7 @@
 #define NUM_STRS 8
 
 void test_map_distrib_str() {
-    printf("test_map_distrib_str:\n");
+    printf("testing distribution of strings\n");
     char str_arr[NUM_STRS][MAX_STR_LEN] = {"ab", "ab2", "hi", "hola", "howdy", 
                                     "how are you doing today", "cmap", "hash"};
     Map *map = map_init();
@@ -75,12 +74,6 @@ void test_add_two_nums() {
     if (!remove_val)
         printf("elem was sucessfully removed\n");
     
-    map_elem *new_first_elem = map->elem_arr[0];
-    if (new_first_elem)
-        printf("new first elem has key: %d and val: %d\n", 
-                *((int*) new_first_elem->key),
-               *((int*) new_first_elem->val));
-    
     //make sure getting new first elem is successful
     const void *retrv_val = map_get(map, &val, sizeof(val));
     if (retrv_val)
@@ -124,7 +117,7 @@ void test_add_two_strs() {
 int main(int argc, const char * argv[]) {
     test_add_two_nums();
     test_add_two_strs();
-    test_map_distrib_num();
+
     test_map_distrib_str();
     return 0;
 }

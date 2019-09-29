@@ -12,6 +12,21 @@
 #include <string.h>
 #include "hash.h"
 
+struct map_elem {
+    void *key;
+    size_t key_sz;
+    void *val;
+    size_t val_sz;
+    
+    struct map_elem *next;
+    struct map_elem *prev;
+};
+
+struct map {
+    map_elem *elem_arr[MAP_NUM_BUCKETS];
+    size_t nelems;
+};
+
 //private helpers
 static int get_bucket_num(const void *key, size_t key_len) {
     assert (key && key_len > 0);
